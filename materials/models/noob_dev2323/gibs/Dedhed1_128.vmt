@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/noob_dev2323/gibs/Dedhed1_128"
+"$nocull" "1"  
+ "$halflambert" "1" 
+ }
