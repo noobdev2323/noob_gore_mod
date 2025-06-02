@@ -79,6 +79,7 @@ female_head_gib_fix = {
     ["models/humans/group03m/female_07.mdl"] = true,  
 }
 no_gib_ragdoll = {
+    ["models/headcrabclassic.mdl"] = true,  
     ["models/madness/npc/grunt_npc.mdl"] = true,  
     ["models/madness/npc/agent_npc.mdl"] = true,  
     ["models/madness/npc/atp_soldat_npc.mdl"] = true,  
@@ -88,6 +89,7 @@ no_gib_ragdoll = {
     ["models/madness/npc/scrape_face_npc.mdl"] = true,  
 }
 prop_parent_blacklist = {
+    ["models/stalker.mdl"] = true,  
     ["models/player/vengeance/skeleton_with_hands/skeleton_with_hands.mdl"] = true,  
     ["models/akuld/hl1dmskel/dm_skel.mdl"] = true,  
     ["models/player/noob_dev2323/katia_managan.mdl"] = true,  
@@ -104,6 +106,7 @@ prop_parent_blacklist = {
     ["models/skeleton/skeleton_bleached.mdl"] = true,  
     ["models/skeleton/skeleton_bloody.mdl"] = true,  
     ["models/skeleton/skeleton_decomp.mdl"] = true,  
+    ["models/vj_nullbody_npc.mdl"] = true,  
 }
 gib_black_list = {
     ["models/player/vengeance/skeleton_with_hands/skeleton_with_hands.mdl"] = true,  

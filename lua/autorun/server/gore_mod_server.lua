@@ -2,6 +2,7 @@ CreateConVar("Noob_gore_mod_enable", "1", FCVAR_ARCHIVE, "Enable or disable gore
 
 CreateConVar("gore_blood_effect", "1", FCVAR_ARCHIVE, "gore_blood_effect")
 CreateConVar("lua_particles_effect", "1", FCVAR_ARCHIVE, "gore_blood_effect")
+CreateConVar("can_gib_only_npc_corpse", "0", FCVAR_ARCHIVE, "can_gib_only_npc_corpse")
 CreateConVar("can_gib_player", "1", FCVAR_ARCHIVE, "can_gib_player")
 CreateConVar("can_gib_ragdoll", "1", FCVAR_ARCHIVE, "can_gib_ragdoll")
 CreateConVar("debug_mode", "0", FCVAR_ARCHIVE, "debug_mode")
@@ -28,9 +29,9 @@ util.AddNetworkString( "head_gibs_particles" )
 
 hook.Add( "ScaleNPCDamage", "ScaleNPCDamageExample", function( npc, hitgroup, dmginfo )
     if GetConVar("Noob_gore_mod_enable"):GetBool() and IsValid(npc) then
-	local npc_model = npc:GetModel()
+	local npc_model = npc:GetModel() --get npc model
 	local damageForce = dmginfo:GetDamageForce():Length()
-    if gib_ragdoll_list[npc_model] or combine_list[npc_model] or npc:GetClass() == "npc_citizen" or npc:GetClass() == "npc_zombie" or npc:GetClass() == "npc_kleiner"  or npc:GetClass() == "terminator_nextbot_fakeply"  or npc:GetClass() == "npc_vj_test_humanply" then
+    if not no_gib_ragdoll[npc_model] and npc:LookupBone("ValveBiped.Bip01_Pelvis") then
 
 		if hitgroup == HITGROUP_CHEST and damageForce > 1200*GetConVar("NPC_dismember_multiplier"):GetFloat() and GetConVar("rib_gib"):GetBool() then     
             npc.spawn_ribs = true
@@ -40,7 +41,9 @@ hook.Add( "ScaleNPCDamage", "ScaleNPCDamageExample", function( npc, hitgroup, dm
 				npc.generic_gib_head = true
 				npc.blood_effect_head = true
 				if dmginfo:IsDamageType(DMG_SLASH) then
-				
+					if GetConVar("decapitation"):GetBool() then
+						npc.head_less = true
+					end 
 				else
 					npc.gibs = true
 				end 

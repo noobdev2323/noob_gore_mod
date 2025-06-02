@@ -7,6 +7,7 @@ if CLIENT then
 
             panel:Help("--Main Options--")
             panel:CheckBox("Enable decapitation", "decapitation") 
+            panel:CheckBox("can gib only npc corpse", "can_gib_only_npc_corpse") 
             panel:CheckBox("can gib ragdoll", "can_gib_ragdoll") 
             panel:CheckBox("can gib player", "can_gib_player") 
             panel:CheckBox("Enable skeletonizer", "Enable_skeletonizer") 
@@ -52,7 +53,7 @@ net.Receive( "head_gibs_particles", function( len, ply )
 	shit_blood(ent)
 end )
 function shit_blood(ent)
-	if not ent:IsValid() then return end
+if ent:IsValid() then 
 	local head_bone = ent:LookupBone( "ValveBiped.Bip01_Head1" )
 	if head_bone == nil then return end
 	
@@ -63,22 +64,23 @@ function shit_blood(ent)
 	local Position_sigma = ent:GetBonePosition(head_bone)
 	for i=1,math.random(10,30) do
 	local Particle = Emitter:Add( "effects/blood2", Position_sigma )
-	if Particle then
-		Particle:SetDieTime( 60 )
+		if Particle then
+			Particle:SetDieTime( 60 )
 
-		Particle:SetStartAlpha( math.random( 200, 255 ) )
-		Particle:SetColor( 255, 0, 0 )
-		Particle:SetStartSize( math.random( 1, 2,5 ) )
+			Particle:SetStartAlpha( math.random( 200, 255 ) )
+			Particle:SetColor( 255, 0, 0 )
+			Particle:SetStartSize( math.random( 1, 2,5 ) )
 
-		Particle:SetEndAlpha( 0 )
-		Particle:SetEndSize( 1 )
-		Particle:SetVelocityScale(true)
-		Particle:SetLighting( true)
+			Particle:SetEndAlpha( 0 )
+			Particle:SetEndSize( 1 )
+			Particle:SetVelocityScale(true)
+			Particle:SetLighting( true)
 
-		Particle:SetGravity( Vector( 0, 0, -350 ) )
-		Particle:SetVelocity(Vector( math.random(-40,40), math.random(-40,40), math.random(50,140) ))
-		Particle:SetCollide( true )	
-	end
+			Particle:SetGravity( Vector( 0, 0, -350 ) )
+			Particle:SetVelocity(Vector( math.random(-40,40), math.random(-40,40), math.random(50,140) ))
+			Particle:SetCollide( true )	
+		end
 	end
 	Emitter:Finish()
+end
 end

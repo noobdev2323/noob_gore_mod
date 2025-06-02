@@ -1,4 +1,3 @@
-
 function colideBone(ragdoll,phys_bone)
 	local colide = ragdoll:GetPhysicsObjectNum( phys_bone ) --get bone id
 	colide:EnableCollisions(false)
@@ -28,6 +27,12 @@ function shitgib(ragdoll,model,bone,meat,forceVector,getpos,random_rotate)
 	
 
 	if meat == true then chunk:SetMaterial( "models/flesh" ) end
+	if ragdoll:IsValid() and ragdoll:LookupBone("ValveBiped.Bip01_Pelvis") ~= nil then 
+		local surfaceProp = ragdoll:GetBoneSurfaceProp(ragdoll:LookupBone("ValveBiped.Bip01_Pelvis"))
+		if surfaceProp == "alienflesh" or surfaceProp == "antlion" or surfaceProp == "zombieflesh" then
+			chunk:SetSkin(1)
+		end	
+	end
 	chunk:Spawn()	
     local chunk = chunk:GetPhysicsObject()
     if IsValid(chunk) then  chunk:AddVelocity(forceVector) end    
@@ -94,6 +99,12 @@ function bonemerge_prop(ragdoll,model)
 		ragdoll.bonemerge_prop:Activate()
 		ragdoll.bonemerge_prop:SetSolid(SOLID_NONE)
 		ragdoll.bonemerge_prop:AddEffects(EF_BONEMERGE)
+		if ragdoll:IsValid() and ragdoll:LookupBone("ValveBiped.Bip01_Pelvis") ~= nil then
+			local surfaceProp = ragdoll:GetBoneSurfaceProp(ragdoll:LookupBone("ValveBiped.Bip01_Pelvis"))
+			if surfaceProp == "alienflesh" or surfaceProp == "antlion" or surfaceProp == "zombieflesh" then
+				ragdoll.bonemerge_prop:SetMaterial("models/combine_soldier/head_gib_2")
+			end
+		end
 	end
 end
 function make_head_gap(owner,ragdoll)
@@ -130,12 +141,42 @@ function GetClosestPhysBone(ent,pos)
 	end
 	return closest_bone
 end
+function GetClosestPhysBone2(ent,dmginfo)
+	local mdl = ent:GetModel()
+	local COLL_CACHE = {}
+
+	local vec_max = Vector(1, 1, 1)
+	local vec_min = -vec_max
+
+	local colls = COLL_CACHE[mdl]
+	if !colls then
+		colls = CreatePhysCollidesFromModel(mdl)
+		COLL_CACHE[mdl] = colls
+	end
+	local dmgpos = dmginfo:GetDamagePosition()
+
+	local dmgdir = dmginfo:GetDamageForce()
+	dmgdir:Normalize()
+
+	local ray_start = dmgpos - dmgdir * 50
+	local ray_end = dmgpos + dmgdir * 50
+
+	for phys_bone, coll in pairs(colls) do
+		phys_bone = phys_bone - 1
+		local bone = ent:TranslatePhysBoneToBone(phys_bone)
+		local pos, ang = ent:GetBonePosition(bone)
+		
+		if coll:TraceBox(pos, ang, ray_start, ray_end, vec_min, vec_max) then
+			return phys_bone
+		end
+	end
+end
 function generic_gib_head(ragdoll)
 	ragdoll.Head_gibbed = true 
 	if GetConVar("debug_mode"):GetBool() then
 		for i, ply in ipairs( player.GetAll() ) do ply:ChatPrint( "head gibbed" ) end
 	end
-	if GetConVar("lua_particles_effect"):GetBool() then
+	if GetConVar("lua_particles_effect"):GetBool() and IsValid(ragdoll) then
 		net.Start( "head_gibs_particles" )
 			net.WriteEntity(ragdoll)
 		net.Broadcast()
@@ -236,7 +277,7 @@ function gib_PhysBone(ragdoll,bone1)
     end
 end
 gib_PhysBone_RAGDOLLS = {}
-hook.Add("Think", "ForcePhysbonePositions_Think", function()
+hook.Add("Think", "ForcePhysbonePositions_Think_sigma", function()
 	for _,ragdoll in ipairs( gib_PhysBone_RAGDOLLS ) do
 		if ragdoll.gib_bone then
 			ForcePhysBonePos(ragdoll) 
@@ -287,4 +328,10 @@ function ApplyCorpseEffects(ent)
 	
 	ent.boneHealth["ValveBiped.Bip01_R_Hand"] = defalt_value*2
 	ent.boneHealth["ValveBiped.Bip01_L_Hand"] = defalt_value*2
+	ent:CallOnRemove("Remove_ragdoll_from_the_table_shit", function()
+        table.RemoveByValue(gib_PhysBone_RAGDOLLS, ent)
+    end)
 end
+concommand.Add( "ngm_debug_print_ragdoll_table", function( ply, cmd, args )
+    PrintTable(gib_PhysBone_RAGDOLLS)
+end )

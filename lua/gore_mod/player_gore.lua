@@ -1,4 +1,5 @@
 if (engine.ActiveGamemode() == "teamfortress") then return end
+if (engine.ActiveGamemode() == "terrortown") then return end
 local function colideBone(ragdoll,phys_bone)
 	local colide = ragdoll:GetPhysicsObjectNum( phys_bone ) --get bone id
 	colide:EnableCollisions(false)
