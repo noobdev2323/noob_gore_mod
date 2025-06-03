@@ -141,7 +141,7 @@ function GetClosestPhysBone(ent,pos)
 	end
 	return closest_bone
 end
-function GetClosestPhysBone2(ent,dmginfo)
+function GetClosestPhysBone_recoded(ent,dmginfo)
 	local mdl = ent:GetModel()
 	local COLL_CACHE = {}
 
@@ -313,23 +313,9 @@ function ApplyCorpseEffects(ent)
 	local defalt_value = 50*GetConVar("limb_health_multiplier"):GetFloat()
 	ent.boneHealth = {}
 	ent.boneHealth["ValveBiped.Bip01_Head1"] = defalt_value
-	
-	ent.boneHealth["ValveBiped.Bip01_L_Hand"] = defalt_value
-	ent.boneHealth["ValveBiped.Bip01_R_Hand"] = defalt_value
-	
-	ent.boneHealth["ValveBiped.Bip01_L_Forearm"] = defalt_value
-	ent.boneHealth["ValveBiped.Bip01_R_Forearm"] = defalt_value
-	
-	ent.boneHealth["ValveBiped.Bip01_R_Calf"] = defalt_value
-	ent.boneHealth["ValveBiped.Bip01_L_Calf"] = defalt_value
-	
-	ent.boneHealth["ValveBiped.Bip01_L_Foot"] = defalt_value
-	ent.boneHealth["ValveBiped.Bip01_R_Foot"] = defalt_value
-	
-	ent.boneHealth["ValveBiped.Bip01_R_Hand"] = defalt_value*2
-	ent.boneHealth["ValveBiped.Bip01_L_Hand"] = defalt_value*2
+
 	ent:CallOnRemove("Remove_ragdoll_from_the_table_shit", function()
-        table.RemoveByValue(gib_PhysBone_RAGDOLLS, ent)
+        table.RemoveByValue(gib_PhysBone_RAGDOLLS, ent) --remove ragdoll on the table
     end)
 end
 concommand.Add( "ngm_debug_print_ragdoll_table", function( ply, cmd, args )
